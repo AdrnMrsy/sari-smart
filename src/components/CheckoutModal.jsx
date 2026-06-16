@@ -112,7 +112,7 @@ export function CheckoutModal({ cart, onClose, onClearCart }) {
           <button 
             onClick={handleClose} 
             aria-label="Start new transaction"
-            className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl shadow-elevation hover:shadow-elevation-lg active:scale-95 transition-all hover:bg-blue-700"
+            className="w-full py-4 bg-gray-800 text-white font-bold rounded-xl shadow-elevation hover:shadow-elevation-lg active:scale-95 transition-all hover:bg-gray-800"
           >
             Start New Transaction
           </button>
@@ -165,7 +165,7 @@ export function CheckoutModal({ cart, onClose, onClearCart }) {
           {/* Total Display */}
           <div className="flex justify-between items-end mb-6">
             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Total Amount</span>
-            <span className="text-4xl font-black bg-gradient-to-r from-brand-600 to-brand-700 text-transparent bg-clip-text">{formatPeso(totalCents)}</span>
+            <span className="text-4xl font-black text-brand-700 dark:text-brand-300">{formatPeso(totalCents)}</span>
           </div>
           
           {/* Payment Input */}
@@ -202,7 +202,7 @@ export function CheckoutModal({ cart, onClose, onClearCart }) {
                   setError("");
                 }}
                 aria-label="Set cash to exact amount"
-                className="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs uppercase transition-colors"
+                className="absolute right-2 top-2 bottom-2 px-4 bg-gray-800 hover:bg-gray-800 text-white rounded-lg font-bold text-xs uppercase transition-colors"
               >
                 Exact
               </button>
@@ -218,7 +218,7 @@ export function CheckoutModal({ cart, onClose, onClearCart }) {
                     setError("");
                   }}
                   aria-label={`Set cash to ₱${bill}`}
-                  className="flex-shrink-0 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-bold rounded-lg border border-neutral-200 hover:border-neutral-300 active:bg-blue-600 active:text-white transition-all"
+                  className="flex-shrink-0 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-bold rounded-lg border border-neutral-200 hover:border-neutral-300 active:bg-gray-800 active:text-white transition-all"
                 >
                   ₱{bill}
                 </button>
@@ -244,7 +244,7 @@ export function CheckoutModal({ cart, onClose, onClearCart }) {
             className={`w-full py-4 rounded-xl font-bold text-white text-lg shadow-md transition-all ${
               (!cashGiven || changeCents < 0 || status === 'saving')
                 ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 hover:shadow-elevation active:scale-95'
+                : 'bg-gray-800 hover:bg-gray-800 hover:shadow-elevation active:scale-95'
             }`}
           >
             {status === 'saving' ? (

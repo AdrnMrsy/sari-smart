@@ -22,6 +22,21 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [transitionTab, setTransitionTab] = useState("search");
 
+  // Theme State
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
+
+  // Apply dark mode to HTML tag
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
    // Always reset authLoading when user changes or on mount
   useEffect(() => {
     setAuthLoading(false);
@@ -93,64 +108,74 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-neutral-50 font-sans text-neutral-900">
+      <div className="flex flex-col h-screen font-sans text-neutral-900 dark:text-neutral-50 bg-gradient-to-br from-brand-50 to-indigo-100 dark:from-gray-950 dark:to-indigo-950/30 bg-fixed transition-colors duration-500">
 
         {/* 1. HEADER (Only shows on tabs other than Search to keep search clean) */}
         {activeTab !== 'search' && (
-          <header className="bg-blue-800 text-white p-4 shadow-elevation z-20 sticky top-0 overflow-hidden">
-            <div className="absolute inset-0 bg-brand-900/10 [mask-image:radial-gradient(100%_100%_at_100%_0,white,transparent)]"></div>
+          <header className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg border-b border-white/40 dark:border-gray-700/50 p-4 z-20 sticky top-0 transition-colors duration-500">
             <div className="flex justify-between items-center max-w-md mx-auto w-full relative">
-              <h1 className="font-black text-2xl tracking-tight flex items-center gap-2 text-white drop-shadow-lg">
-                <span className="bg-white text-brand-600 p-1.5 rounded-lg shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
+              <h1 className="font-black text-2xl tracking-tight flex items-center gap-2 drop-shadow-sm">
+                <span>
+                  <img className="h-11" src="../SariSmart.png"/>
                 </span>
-                <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">Sari-Smart</span>
+                <span className="text-brand-700 dark:text-brand-300">
+                  Sari-Smart
+                </span>
               </h1>
 
-              {currentUser && currentUser.email ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-xs opacity-85 hidden sm:inline-block">
-                    {currentUser.email}
-                  </span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="p-2 rounded-full bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-700 transition-all text-neutral-600 dark:text-neutral-300 shadow-sm"
+                  aria-label="Toggle Dark Mode"
+                >
+                  {theme === 'dark' ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                  )}
+                </button>
+                {currentUser && currentUser.email ? (
                   <button
                     onClick={handleLogout}
                     disabled={authLoading}
                     aria-label="Sign out"
-                    className={`text-xs font-bold px-4 py-2 rounded-lg transition-all border-2 ${
+                    className={`text-xs font-bold px-4 py-2 rounded-xl transition-all border border-neutral-200 dark:border-gray-700 shadow-sm ${
                       authLoading
-                        ? 'bg-blue-800 text-blue-300 opacity-75 cursor-not-allowed border-blue-700'
-                        : 'bg-white text-blue-900 border-white hover:bg-blue-50 active:scale-95 hover:shadow-lg'
+                        ? 'opacity-75 cursor-not-allowed'
+                        : 'bg-white/80 dark:bg-gray-800/80 hover:bg-neutral-50 dark:hover:bg-gray-700 active:scale-95'
                     }`}
                   >
                     {authLoading ? 'Signing out...' : 'Sign Out'}
                   </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    setAuthError("");
-                    setAuthLoading(false);
-                    setShowLoginModal(true);
-                  }}
-                  disabled={authLoading || !cloudConfigured}
-                  aria-label="Login to sync"
-                  className={`text-sm font-bold px-4 py-2 rounded-lg shadow-md transition-all border-2 ${
-                    authLoading || !cloudConfigured
-                      ? 'bg-blue-800 text-blue-300 border-blue-700 cursor-not-allowed opacity-75'
-                      : 'bg-white text-blue-900 border-white hover:bg-blue-50 active:scale-95 hover:shadow-lg'
-                  }`}
-                  title={!cloudConfigured ? 'Cloud sync not configured' : 'Login to sync with cloud'}
-                >
-                  {authLoading ? '...' : 'Login'}
-                </button>
-              )}
+                ) : (
+                  <button
+                    onClick={() => {
+                      setAuthError("");
+                      setAuthLoading(false);
+                      setShowLoginModal(true);
+                    }}
+                    disabled={authLoading || !cloudConfigured}
+                    aria-label="Login to sync"
+                    className={`text-sm font-bold px-4 py-2 rounded-xl shadow-md transition-all border border-brand-200 dark:border-brand-800 ${
+                      authLoading || !cloudConfigured
+                        ? 'opacity-75 cursor-not-allowed bg-neutral-200 dark:bg-gray-800 text-neutral-500'
+                        : 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white hover:from-brand-700 hover:to-indigo-700 active:scale-95 hover:shadow-lg dark:shadow-brand-500/20'
+                    }`}
+                  >
+                    {authLoading ? '...' : 'Login'}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Error Message */}
             {authError && (
-              <div className="mt-4 animate-slide-up bg-accent-50 border border-accent-200 text-accent-700 text-sm px-4 py-3 rounded-lg">
+              <div className="mt-4 animate-slide-up bg-accent-50/90 dark:bg-accent-900/50 backdrop-blur-md border border-accent-200 dark:border-accent-800 text-accent-700 dark:text-accent-300 text-sm px-4 py-3 rounded-xl shadow-sm">
                 <div className="flex items-start gap-2">
                   <svg className="h-5 w-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
@@ -177,9 +202,9 @@ function App() {
           </div>
         </main>
 
-        {/* 4. BOTTOM NAVIGATION */}
-        <nav className="fixed bottom-0 w-full bg-white border-t border-neutral-200 shadow-[0_-2px_8px_-1px_rgba(0,0,0,0.08)] pb-safe z-50">
-          <div className="flex justify-around items-center h-16 max-w-md mx-auto">
+        {/* 4. BOTTOM NAVIGATION - Floating Pill Style */}
+        <nav className="fixed bottom-4 left-0 right-0 w-full z-50 px-4">
+          <div className="flex justify-around items-center h-16 max-w-md mx-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/40 dark:border-gray-700/50 shadow-xl-soft dark:shadow-black/50 rounded-2xl transition-colors duration-500">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -189,10 +214,10 @@ function App() {
                   aria-label={`Navigate to ${tab.label}`}
                   aria-current={isActive ? "page" : undefined}
                   className={`flex-1 flex flex-col items-center justify-center h-full relative transition-all duration-200 active:scale-95 ${
-                    isActive ? "text-brand-600" : "text-neutral-400 hover:text-neutral-600"
+                    isActive ? "text-brand-600 dark:text-brand-400" : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
                   }`}
                 >
-                  <div className={`transition-all duration-300 ${isActive ? "-translate-y-1 scale-110" : "scale-100"}`}>
+                  <div className={`transition-all duration-300 ${isActive ? "-translate-y-1 scale-110 drop-shadow-md" : "scale-100"}`}>
                     {tab.icon}
                   </div>
                   <span className={`text-[10px] font-bold mt-0.5 transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0"}`}>
@@ -200,7 +225,7 @@ function App() {
                   </span>
                   {/* Active Indicator */}
                   {isActive && (
-                    <div className="absolute bottom-1.5 h-0.5 w-6 bg-gradient-to-r from-brand-400 to-brand-600 rounded-full animate-fade-in"></div>
+                    <div className="absolute bottom-1.5 h-1 w-8 bg-gradient-to-r from-brand-400 to-indigo-500 rounded-full animate-fade-in shadow-sm dark:shadow-brand-500/50"></div>
                   )}
                 </button>
               );

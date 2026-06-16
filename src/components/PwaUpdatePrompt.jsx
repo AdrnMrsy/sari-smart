@@ -32,7 +32,7 @@ export function PwaUpdatePrompt() {
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
-              className="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+              className="flex-1 rounded-lg bg-black px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-black"
             >
               Refresh Now
             </button>

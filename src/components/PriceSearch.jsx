@@ -85,24 +85,24 @@ export function PriceSearch({ onSyncClick }) {
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   return (
-    <div className="bg-neutral-50 min-h-screen relative pb-32">
+    <div className="relative pb-32">
 
       {/* 1. STICKY SEARCH HEADER */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-neutral-200 shadow-base px-4 pt-4 pb-3">
+      <div className="sticky top-0 z-30 glass-nav px-4 pt-4 pb-3">
         <div className="flex items-center gap-2">
           {/* Search Input */}
           <div className="relative flex-1">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-3.5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
             <input
               type="text"
               placeholder="Search items..."
               aria-label="Search products"
-              className="w-full pl-10 pr-4 py-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl text-neutral-800 font-medium focus:border-brand-500 focus:bg-white transition-all placeholder:text-neutral-400 outline-none"
+              className="glass-input w-full pl-10 pr-4 py-3 text-neutral-800 dark:text-white font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-3.5 text-neutral-400 pointer-events-none z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
 
           {/* Sync Button (only show if cloud configured) */}
@@ -113,7 +113,7 @@ export function PriceSearch({ onSyncClick }) {
               className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-sm ${
                 currentUser
                   ? 'bg-success-100 text-success-600'
-                  : 'bg-brand-100 text-brand-600 hover:bg-brand-200 active:scale-95'
+                  : 'bg-black text-brand-600 hover:bg-brand-200 active:scale-95'
               }`}
             >
               {currentUser ? (
@@ -162,9 +162,9 @@ export function PriceSearch({ onSyncClick }) {
           <button 
             onClick={() => setShowCheckout(true)}
             aria-label="Open checkout"
-            className="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 text-white p-1 rounded-2xl shadow-elevation-lg flex items-center pr-6 overflow-hidden active:scale-[0.98] transition-all hover:shadow-elevation"
+            className="w-full gradient-bg p-1 rounded-2xl flex items-center pr-6 overflow-hidden"
           >
-            <div className="bg-gradient-to-br from-brand-500 to-brand-600 w-16 h-14 flex flex-col items-center justify-center rounded-xl mr-4 shadow-base">
+            <div className="bg-gradient-to-br from-black to-gray-800 w-16 h-14 flex flex-col items-center justify-center rounded-xl mr-4 shadow-base">
               <span className="font-black text-lg leading-none">{cartCount}</span>
               <span className="text-[10px] uppercase opacity-90 font-bold">Items</span>
             </div>
@@ -195,11 +195,11 @@ export function PriceSearch({ onSyncClick }) {
 
       {/* EDIT & DELETE MODAL */}
       {editingItem && (
-        <div className="fixed inset-0 bg-neutral-950/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl shadow-elevation-lg w-full max-w-sm overflow-hidden animate-slide-up">
+        <div className="fixed inset-0 bg-neutral-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
+          <div className="glass-card w-full max-w-sm overflow-hidden animate-slide-up">
             
             {/* Modal Header */}
-            <div className="bg-neutral-50 p-4 border-b border-neutral-200 flex justify-between items-center">
+            <div className="bg-white/50 dark:bg-gray-800/50 p-4 border-b border-white/30 dark:border-gray-700/50 flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg text-neutral-900">Edit Item</h3>
                 <p className="text-xs text-neutral-500">Update inventory details</p>
@@ -223,7 +223,7 @@ export function PriceSearch({ onSyncClick }) {
                   value={editingItem.name}
                   aria-label="Edit product name"
                   onChange={e => setEditingItem({...editingItem, name: e.target.value})}
-                  className="w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold text-neutral-800 focus:border-brand-500 focus:bg-white outline-none transition-all"
+                  className="glass-input w-full p-3 font-bold text-neutral-800 dark:text-white"
                 />
               </div>
 
@@ -238,7 +238,7 @@ export function PriceSearch({ onSyncClick }) {
                       value={editingItem.retailPrice}
                       aria-label="Edit product price"
                       onChange={e => setEditingItem({...editingItem, retailPrice: e.target.value})}
-                      className="w-full pl-10 p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold text-brand-600 focus:border-brand-500 focus:bg-white outline-none transition-all"
+                      className="glass-input w-full pl-10 p-3 font-bold text-brand-600 dark:text-brand-400"
                     />
                   </div>
                 </div>
@@ -251,7 +251,7 @@ export function PriceSearch({ onSyncClick }) {
                     value={editingItem.stock}
                     aria-label="Edit product stock"
                     onChange={e => setEditingItem({...editingItem, stock: e.target.value})}
-                    className={`w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold focus:bg-white outline-none transition-all ${editingItem.stock <= 5 ? 'text-warning-600 border-warning-200 focus:border-warning-500' : 'text-neutral-800 focus:border-brand-500'}`}
+                    className={`glass-input w-full p-3 font-bold ${editingItem.stock <= 5 ? 'text-warning-600 border-warning-400 focus:border-warning-500' : 'text-neutral-800 dark:text-white focus:border-brand-500'}`}
                   />
                 </div>
               </div>
@@ -264,7 +264,7 @@ export function PriceSearch({ onSyncClick }) {
                     value={editingItem.category} 
                     aria-label="Edit product category"
                     onChange={e => setEditingItem({...editingItem, category: e.target.value})}
-                    className="w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-medium appearance-none focus:border-brand-500 focus:bg-white outline-none transition-all"
+                    className="glass-input w-full p-3 font-medium appearance-none dark:bg-gray-800"
                   >
                     {categories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -290,7 +290,7 @@ export function PriceSearch({ onSyncClick }) {
                  {/* Save Button */}
                  <button 
                   type="submit" 
-                  className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all"
+                  className="flex-1 py-3 gradient-bg font-bold rounded-xl shadow-lg active:scale-95 transition-all"
                  >
                    Save Changes
                  </button>

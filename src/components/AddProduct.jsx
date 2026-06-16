@@ -72,13 +72,13 @@ export function AddProduct() {
   }
 
   return (
-    <div className="bg-neutral-50 min-h-screen p-4 pb-24">
+    <div className="p-4 pb-24">
       
       <div className="max-w-md mx-auto">
-        <h2 className="text-3xl font-black text-neutral-900 mb-1">New Item</h2>
-        <p className="text-neutral-500 text-sm mb-6">Add new inventory to your store</p>
+        <h2 className="text-3xl font-black text-neutral-900 dark:text-white mb-1 drop-shadow-sm">New Item</h2>
+        <p className="text-neutral-500 dark:text-neutral-300 text-sm mb-6">Add new inventory to your store</p>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-base border border-neutral-200 space-y-5">
+        <form onSubmit={handleSubmit} className="glass-card p-6 space-y-5">
 
           {/* Error Alert */}
           {errors.submit && (
@@ -104,7 +104,7 @@ export function AddProduct() {
                 placeholder="Scan or type barcode"
                 value={barcode} 
                 onChange={e => setBarcode(e.target.value)}
-                className="w-full pl-12 p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-mono text-sm focus:border-brand-500 focus:bg-white outline-none transition-all"
+                className="glass-input w-full pl-12 p-3 font-mono text-sm"
                 aria-label="Product barcode"
               />
             </div>
@@ -120,8 +120,8 @@ export function AddProduct() {
               value={name} 
               onChange={e => setName(e.target.value)}
               aria-label="Product name"
-              className={`w-full p-4 bg-neutral-100 border-2 rounded-xl font-bold text-neutral-900 focus:bg-white outline-none transition-all placeholder:font-normal ${
-                errors.name ? 'border-accent-400 focus:border-accent-400' : 'border-neutral-200 focus:border-brand-500'
+              className={`glass-input w-full p-4 font-bold placeholder:font-normal ${
+                errors.name ? 'border-accent-400 focus:border-accent-400 focus:ring-accent-500/50' : ''
               }`}
             />
             {errors.name && <p className="text-accent-600 text-xs mt-2 ml-1 font-medium">{errors.name}</p>}
@@ -139,8 +139,8 @@ export function AddProduct() {
                   value={price} 
                   onChange={e => setPrice(e.target.value)}
                   aria-label="Product price"
-                  className={`w-full pl-10 p-3 bg-neutral-100 border-2 rounded-xl font-black text-brand-600 text-lg focus:bg-white outline-none transition-all ${
-                    errors.price ? 'border-accent-400 focus:border-accent-400' : 'border-neutral-200 focus:border-brand-500'
+                  className={`glass-input w-full pl-10 p-3 font-black text-brand-600 dark:text-brand-400 text-lg ${
+                    errors.price ? 'border-accent-400 focus:border-accent-400 focus:ring-accent-500/50' : ''
                   }`}
                 />
               </div>
@@ -155,8 +155,8 @@ export function AddProduct() {
                 value={stock} 
                 onChange={e => setStock(e.target.value)}
                 aria-label="Product stock"
-                className={`w-full p-3 bg-neutral-100 border-2 rounded-xl font-bold text-neutral-900 focus:bg-white outline-none transition-all ${
-                  errors.stock ? 'border-accent-400 focus:border-accent-400' : 'border-neutral-200 focus:border-brand-500'
+                className={`glass-input w-full p-3 font-bold ${
+                  errors.stock ? 'border-accent-400 focus:border-accent-400 focus:ring-accent-500/50' : ''
                 }`}
               />
               {errors.stock && <p className="text-accent-600 text-xs mt-2 ml-1 font-medium">{errors.stock}</p>}
@@ -171,7 +171,7 @@ export function AddProduct() {
                 value={category} 
                 onChange={e => setCategory(e.target.value)}
                 aria-label="Product category"
-                className="w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-medium text-neutral-700 appearance-none focus:border-brand-500 focus:bg-white outline-none transition-all"
+                className="glass-input w-full p-3 font-medium appearance-none dark:bg-gray-800"
               >
                 {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -189,9 +189,9 @@ export function AddProduct() {
             className={`
               w-full py-4 rounded-xl font-bold text-lg shadow-md transition-all duration-200 transform
               ${status === 'success' ? 'bg-success-600 text-white scale-105 animate-pulse-soft' : ''}
-              ${status === 'idle' && Object.keys(errors).length === 0 ? 'bg-blue-600 text-white active:scale-95 hover:bg-blue-700 hover:shadow-elevation' : ''}
-              ${status === 'idle' && Object.keys(errors).length > 0 ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed' : ''}
-              ${status === 'saving' ? 'bg-blue-600 text-white' : ''}
+              ${status === 'idle' && Object.keys(errors).length === 0 ? 'gradient-bg' : ''}
+              ${status === 'idle' && Object.keys(errors).length > 0 ? 'bg-neutral-300 dark:bg-gray-700 text-neutral-500 dark:text-neutral-400 cursor-not-allowed' : ''}
+              ${status === 'saving' ? 'bg-gray-800 dark:bg-gray-600 text-white' : ''}
             `}
           >
             {status === 'idle' && "Save Product"}

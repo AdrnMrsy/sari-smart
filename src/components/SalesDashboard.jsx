@@ -26,21 +26,21 @@ export function SalesDashboard() {
   const transactionCount = salesData?.length || 0;
 
   return (
-    <div className="p-4 pb-24 bg-neutral-50 min-h-screen">
-      <h2 className="text-xl font-bold mb-4 text-neutral-800">Sales Dashboard</h2>
+    <div className="p-4 pb-24 relative">
+      <h2 className="text-xl font-bold mb-4 text-neutral-800 dark:text-white drop-shadow-sm">Sales Dashboard</h2>
 
       {/* Filter Toggles */}
-      <div className="flex bg-white rounded-lg p-1 mb-6 shadow-md border border-neutral-200">
+      <div className="flex glass-card p-1 mb-6 shadow-md border border-neutral-200 dark:border-gray-700">
         <button 
           onClick={() => setFilter('today')}
-          className={`flex-1 py-2 rounded-md font-bold text-sm transition-all ${filter === 'today' ? 'bg-blue-600 text-white' : 'text-neutral-500 hover:text-neutral-700'}`}
+          className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${filter === 'today' ? 'gradient-bg shadow-md' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
           aria-label="Filter sales for today"
         >
           Today
         </button>
         <button 
           onClick={() => setFilter('all')}
-          className={`flex-1 py-2 rounded-md font-bold text-sm transition-all ${filter === 'all' ? 'bg-blue-600 text-white' : 'text-neutral-500 hover:text-neutral-700'}`}
+          className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${filter === 'all' ? 'gradient-bg shadow-md' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
           aria-label="Filter sales for all time"
         >
           All Time
@@ -50,37 +50,37 @@ export function SalesDashboard() {
       {/* BIG METRIC CARDS */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* Total Sales Card */}
-        <div className="bg-gradient-to-br from-brand-600 to-brand-700 text-white p-5 rounded-2xl shadow-elevation hover:shadow-elevation-lg transition-all">
-          <div className="text-brand-100 text-sm font-medium mb-1">Total Sales</div>
+        <div className="gradient-bg p-5 rounded-2xl">
+          <div className="text-white/80 text-sm font-medium mb-1">Total Sales</div>
           <div className="text-3xl font-black">{formatPeso(totalRevenueCents)}</div>
         </div>
 
         {/* Transactions Card */}
-        <div className="bg-white p-5 rounded-2xl shadow-md border border-neutral-200 hover:shadow-elevation transition-all">
+        <div className="glass-card p-5">
           <div className="text-neutral-500 text-sm font-medium mb-1">Transactions</div>
-          <div className="text-3xl font-black text-neutral-800">{transactionCount}</div>
+          <div className="text-3xl font-black text-neutral-800 dark:text-white">{transactionCount}</div>
         </div>
       </div>
 
       {/* Transaction History List */}
-      <h3 className="font-bold text-neutral-700 mb-3">Recent Transactions</h3>
+      <h3 className="font-bold text-neutral-700 dark:text-neutral-300 mb-3 drop-shadow-sm">Recent Transactions</h3>
       <div className="space-y-3">
         {salesData?.map(sale => (
-          <div key={sale.id} className="bg-white p-4 rounded-xl shadow-md border border-neutral-200 flex justify-between items-center hover:shadow-elevation transition-all">
+          <div key={sale.id} className="glass-card p-4 flex justify-between items-center shadow-sm">
             <div>
-              <div className="font-bold text-neutral-800 text-sm">{sale.items}</div>
+              <div className="font-bold text-neutral-800 dark:text-white text-sm">{sale.items}</div>
               <div className="text-xs text-neutral-400 mt-1">
                 {new Date(sale.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
               </div>
             </div>
-            <div className="font-bold text-success-600">
+            <div className="font-bold text-success-600 dark:text-success-400 text-lg drop-shadow-sm">
               +{formatPeso(pesoCents(sale.total))}
             </div>
           </div>
         ))}
 
         {salesData?.length === 0 && (
-          <div className="text-center py-10 bg-white rounded-xl border border-neutral-200">
+          <div className="text-center py-10 glass-card">
             <p className="text-neutral-400">No sales found for this period.</p>
           </div>
         )}

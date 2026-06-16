@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 /* Smooth scrolling */
 html {
@@ -62,4 +63,25 @@ select {
   html {
     font-size: 16px;
   }
+}
+
+/* Premium UI Utilities */
+.glass-card {
+  @apply bg-white/70 dark:bg-gray-900/60 backdrop-blur-lg border border-white/40 dark:border-gray-700/50 shadow-xl-soft dark:shadow-none rounded-2xl transition-all duration-300;
+}
+
+.glass-panel {
+  @apply bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-white/30 dark:border-gray-700/30 rounded-xl;
+}
+
+.glass-input {
+  @apply bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-neutral-200 dark:border-gray-700 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 rounded-lg transition-all dark:text-white dark:placeholder-gray-400;
+}
+
+.gradient-text {
+  @apply text-brand-700 dark:text-brand-300;
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-br from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-lg shadow-brand-500/30 dark:shadow-brand-500/20 transition-all active:scale-95;
 }

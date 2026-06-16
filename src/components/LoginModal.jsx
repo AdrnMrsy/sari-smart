@@ -100,8 +100,8 @@ export function LoginModal({ onClose, onLoginSuccess }) {
             aria-label="Login with Dexie Cloud"
             className={`w-full py-3 rounded-xl font-bold text-white transition-all shadow-md ${
               loading
-                ? 'bg-blue-500 cursor-not-allowed opacity-75'
-                : 'bg-blue-600 hover:bg-blue-700 hover:shadow-elevation active:scale-95'
+                ? 'bg-black cursor-not-allowed opacity-75'
+                : 'bg-black hover:bg-black hover:shadow-elevation active:scale-95'
             }`}
           >
             {loading ? (

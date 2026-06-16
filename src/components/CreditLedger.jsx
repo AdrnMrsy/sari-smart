@@ -224,7 +224,7 @@ export function CreditLedger() {
   );
 
   return (
-    <div className="bg-neutral-50 min-h-screen pb-24 relative">
+    <div className="pb-24 relative">
       
       {/* ================= MAIN LIST VIEW ================= */}
       {!selectedCustomer && (
@@ -236,7 +236,7 @@ export function CreditLedger() {
             </div>
             <button 
               onClick={() => setShowAddCustomer(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold shadow-elevation hover:shadow-elevation-lg active:scale-95 transition-all aria-label-add-person"
+              className="gradient-bg px-4 py-2 rounded-xl font-bold transition-all aria-label-add-person"
               aria-label="Add new customer"
             >
               + Add Person
@@ -248,7 +248,7 @@ export function CreditLedger() {
               <div 
                 key={c.id} 
                 onClick={() => setSelectedCustomer(c)} 
-                className="flex items-center p-4 bg-white shadow-md border border-neutral-200 rounded-2xl active:bg-neutral-50 transition-colors cursor-pointer"
+                className="flex items-center p-4 glass-card hover:bg-white/40 dark:hover:bg-gray-800/40 cursor-pointer"
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-4 ${c.balance > 0 ? 'bg-accent-600' : 'bg-success-600'}`}>
                   {getInitials(c.name)}
@@ -276,8 +276,8 @@ export function CreditLedger() {
 
       {/* ================= DETAIL VIEW ================= */}
       {selectedCustomer && (
-        <div className="fixed inset-0 z-50 bg-neutral-50 overflow-y-auto pb-20 animate-slide-up">
-          <div className="bg-neutral-900 text-white p-6 rounded-b-3xl shadow-elevation-lg sticky top-0 z-10">
+        <div className="fixed inset-0 z-50 bg-neutral-50/50 dark:bg-gray-950/80 backdrop-blur-md overflow-y-auto pb-20 animate-slide-up">
+          <div className="glass-card bg-gray-900/90 dark:bg-gray-900/90 text-white p-6 rounded-b-3xl sticky top-0 z-10 border-t-0 rounded-t-none">
             <div className="flex justify-between items-start mb-6">
               <button onClick={() => setSelectedCustomer(null)} className="flex items-center text-neutral-300 hover:text-white font-bold text-sm transition-colors" aria-label="Go back">
                 <svg className="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
@@ -323,8 +323,8 @@ export function CreditLedger() {
             <div className="space-y-0 relative border-l-2 border-neutral-200 ml-4 pl-6 py-2">
               {history?.map(log => (
                 <div key={log.id} className="mb-6 relative">
-                  <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-neutral-50 ${log.type === 'payment' ? 'bg-success-600' : 'bg-accent-600'}`}></div>
-                  <div className="flex justify-between items-start bg-white p-3 rounded-xl border border-neutral-200 shadow-md">
+                  <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-neutral-50 dark:border-gray-800 ${log.type === 'payment' ? 'bg-success-600' : 'bg-accent-600'}`}></div>
+                  <div className="flex justify-between items-start glass-card p-3 shadow-md">
                     <div>
                       <div className="font-bold text-neutral-700 text-sm">{log.items}</div>
                       <div className="text-xs text-neutral-400 mt-0.5">
@@ -345,9 +345,9 @@ export function CreditLedger() {
 
       {/* ================= MODAL: ADD CUSTOMER ================= */}
       {showAddCustomer && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-2xl w-full max-w-sm animate-slide-up shadow-elevation-lg">
-            <h3 className="font-bold text-lg mb-4 text-neutral-800">New Customer</h3>
+        <div className="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+          <div className="glass-card w-full max-w-sm animate-slide-up p-6">
+            <h3 className="font-bold text-lg mb-4 text-neutral-800 dark:text-white">New Customer</h3>
 
             {validationErrors.submit && (
               <div className="bg-accent-50 border border-accent-200 rounded-lg p-2 text-xs text-accent-700 mb-4">
@@ -357,8 +357,8 @@ export function CreditLedger() {
 
             <input
               autoFocus type="text" placeholder="Name (e.g. Aling Nena)"
-              className={`w-full p-4 bg-neutral-50 border-2 rounded-xl font-bold mb-4 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 transition-all ${
-                validationErrors.name ? 'border-accent-500' : 'border-neutral-200'
+              className={`glass-input w-full p-4 font-bold mb-4 ${
+                validationErrors.name ? 'border-accent-500' : ''
               }`}
               value={newCustomerName} onChange={e => setNewCustomerName(e.target.value)}
               onFocus={() => setValidationErrors({})}
@@ -370,8 +370,8 @@ export function CreditLedger() {
               <button onClick={() => {
                 setShowAddCustomer(false);
                 setValidationErrors({});
-              }} className="flex-1 py-3 font-bold text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors" aria-label="Cancel add customer">Cancel</button>
-              <button onClick={handleAddCustomer} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-elevation hover:shadow-elevation-lg transition-all" aria-label="Save new customer">Save</button>
+              }} className="flex-1 py-3 font-bold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg transition-colors" aria-label="Cancel add customer">Cancel</button>
+              <button onClick={handleAddCustomer} className="flex-1 gradient-bg rounded-xl font-bold transition-all" aria-label="Save new customer">Save</button>
             </div>
           </div>
         </div>
@@ -379,17 +379,17 @@ export function CreditLedger() {
 
       {/* ================= MODAL: ADD UTANG (With Qty) ================= */}
       {showDebtModal && (
-        <div className="fixed inset-0 bg-black/60 z-[60] flex flex-col justify-end sm:justify-center p-0 sm:p-4 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md mx-auto h-[85vh] sm:h-auto sm:rounded-2xl rounded-t-2xl flex flex-col overflow-hidden animate-slide-up shadow-elevation-lg">
-            <div className="p-4 bg-neutral-50 border-b flex justify-between items-center">
+        <div className="fixed inset-0 bg-gray-900/60 z-[60] flex flex-col justify-end sm:justify-center p-0 sm:p-4 backdrop-blur-md">
+          <div className="glass-card w-full max-w-md mx-auto h-[85vh] sm:h-auto sm:rounded-2xl rounded-t-2xl flex flex-col overflow-hidden animate-slide-up border-b-0 rounded-b-none sm:rounded-b-2xl">
+            <div className="p-4 bg-white/50 dark:bg-gray-800/50 border-b border-white/30 dark:border-gray-700/50 flex justify-between items-center">
               <h3 className="font-bold text-accent-600">Add Utang Items</h3>
               <button onClick={() => setShowDebtModal(false)} className="font-bold text-neutral-400 hover:text-neutral-600 transition-colors" aria-label="Close debt modal">Close</button>
             </div>
             
-            <div className="p-4 border-b">
+            <div className="p-4 border-b border-white/30 dark:border-gray-700/50">
               <input 
                 type="text" placeholder="Search item..." 
-                className="w-full p-3 bg-neutral-100 rounded-xl font-bold outline-none focus:border-2 focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all"
+                className="glass-input w-full p-3 font-bold"
                 value={itemSearch} onChange={e => setItemSearch(e.target.value)}
                 aria-label="Search products"
               />
@@ -409,7 +409,7 @@ export function CreditLedger() {
 
             <div className="flex-grow overflow-y-auto p-4 space-y-2">
               {debtCart.map((item) => (
-                <div key={item.id} className="flex justify-between items-center bg-white p-3 border border-neutral-200 rounded-xl shadow-md">
+                <div key={item.id} className="flex justify-between items-center glass-card p-3 shadow-sm">
                   
                   {/* Name & Unit Price */}
                   <div className="flex-grow">
@@ -431,8 +431,8 @@ export function CreditLedger() {
               {debtCart.length === 0 && <p className="text-center text-neutral-400 mt-10">Search items to add to the list.</p>}
             </div>
 
-            <div className="p-4 bg-neutral-50 border-t">
-              <div className="flex justify-between mb-4 text-xl font-bold text-neutral-800">
+            <div className="p-4 bg-white/50 dark:bg-gray-800/50 border-t border-white/30 dark:border-gray-700/50">
+              <div className="flex justify-between mb-4 text-xl font-bold text-neutral-800 dark:text-white">
                  <span>Total Utang</span>
                  <span className="text-accent-600">{formatPeso(debtCartTotalCents)}</span>
               </div>
@@ -458,8 +458,8 @@ export function CreditLedger() {
 
       {/* ================= MODAL: PAY UTANG (Calculator) ================= */}
       {showPayModal && (
-        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-2xl w-full max-w-sm animate-slide-up shadow-elevation-lg">
+        <div className="fixed inset-0 bg-gray-900/60 z-[60] flex items-center justify-center p-4 backdrop-blur-md">
+          <div className="glass-card p-6 w-full max-w-sm animate-slide-up">
 
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-lg text-success-700">Record Payment</h3>
@@ -481,21 +481,21 @@ export function CreditLedger() {
               </div>
             )}
 
-            {/* Payment Input */}
+             {/* Payment Input */}
             <div className="mb-4">
               <label className="text-xs font-bold text-neutral-400 uppercase" htmlFor="payment-amount">Amount to Pay</label>
               <div className="relative">
-                 <span className="absolute left-3 top-3.5 text-neutral-400 font-bold">₱</span>
                  <input
                   id="payment-amount"
                   autoFocus type="number"
-                  className={`w-full pl-8 p-3 bg-neutral-50 border-2 rounded-xl font-black text-2xl text-neutral-800 outline-none focus:border-success-500 focus:ring-2 focus:ring-success-200 transition-all ${
-                    validationErrors.amount ? 'border-accent-500' : 'border-neutral-200'
+                  className={`glass-input w-full pl-8 p-3 font-black text-2xl ${
+                    validationErrors.amount ? 'border-accent-500' : ''
                   }`}
                   value={paymentAmount} onChange={e => setPaymentAmount(e.target.value)}
                   onFocus={() => setValidationErrors({})}
                   aria-label="Payment amount"
                 />
+                <span className="absolute left-3 top-3.5 text-neutral-400 font-bold pointer-events-none z-10">₱</span>
               </div>
               {validationErrors.amount && <p className="text-accent-600 text-xs mt-1 ml-1">{validationErrors.amount}</p>}
             </div>
@@ -504,16 +504,16 @@ export function CreditLedger() {
             <div className="mb-6">
               <label className="text-xs font-bold text-neutral-400 uppercase" htmlFor="cash-received">Cash Received (Optional)</label>
               <div className="relative">
-                 <span className="absolute left-3 top-3.5 text-neutral-400 font-bold">₱</span>
                  <input
                   id="cash-received"
                   type="number"
                   placeholder="Enter bill amount..."
-                  className="w-full pl-8 p-3 bg-neutral-50 border-2 border-neutral-200 rounded-xl font-bold text-xl text-neutral-600 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 transition-all"
+                  className="glass-input w-full pl-8 p-3 font-bold text-xl"
                   value={cashReceived} onChange={e => setCashReceived(e.target.value)}
                   onFocus={() => setValidationErrors({})}
                   aria-label="Cash received amount"
                 />
+                <span className="absolute left-3 top-3.5 text-neutral-400 font-bold pointer-events-none z-10">₱</span>
               </div>
             </div>
 
@@ -531,8 +531,8 @@ export function CreditLedger() {
               <button onClick={() => {
                 setShowPayModal(false);
                 setValidationErrors({});
-              }} className="flex-1 py-3 font-bold text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors" aria-label="Cancel payment">Cancel</button>
-              <button onClick={handleConfirmPayment} className="flex-1 bg-success-600 hover:bg-success-700 text-white rounded-xl font-bold shadow-elevation hover:shadow-elevation-lg transition-all" aria-label="Confirm payment">Confirm Pay</button>
+              }} className="flex-1 py-3 font-bold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg transition-colors" aria-label="Cancel payment">Cancel</button>
+              <button onClick={handleConfirmPayment} className="flex-1 bg-success-600 hover:bg-success-700 text-white rounded-xl font-bold shadow-lg transition-all" aria-label="Confirm payment">Confirm Pay</button>
             </div>
           </div>
         </div>
