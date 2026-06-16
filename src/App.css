@@ -1,0 +1,19 @@
+
+/* Subtle fade-in for main app container */
+.fade-in {
+	animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(24px) scale(0.98); }
+	to { opacity: 1; transform: none; }
+}
+
+/* Card hover pop effect (for ProductCard) */
+.card-pop {
+	transition: box-shadow 0.2s, transform 0.2s;
+}
+.card-pop:hover {
+	box-shadow: 0 8px 32px 0 rgba(245, 158, 66, 0.18), 0 1.5px 6px 0 rgba(0,0,0,0.04);
+	transform: scale(1.035) translateY(-2px);
+}

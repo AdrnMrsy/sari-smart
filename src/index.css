@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for consistency */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(203, 213, 225);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(148, 163, 184);
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid rgb(59, 130, 246);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+input,
+select,
+textarea {
+  transition: all 200ms ease-out;
+}
+
+/* Prevent layout shift when scrollbar appears */
+html {
+  overflow-y: scroll;
+}
+
+/* Remove default button styles */
+button {
+  border: none;
+  font-family: inherit;
+}
+
+/* Ensure inputs have proper base styles */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Responsive typography scaling */
+@media (max-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+}

@@ -1,17 +1,23 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useObservable } from 'dexie-react-hooks';
 import { db } from '../db';
+import { calculateTotal, formatPeso, pesoCents } from '../utils/money';
 import { CheckoutModal } from './CheckoutModal';
-import { ProductCard } from './ProductCard'; 
+import { ProductCard } from './ProductCard';
 
-export function PriceSearch() {
+export function PriceSearch({ onSyncClick }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [cart, setCart] = useState([]); 
+  const [cart, setCart] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
-  
+
   // Edit State
   const [editingItem, setEditingItem] = useState(null);
   const categories = ["General", "Canned Goods", "Noodles", "Drinks", "Toiletries", "Snacks", "Load/Data", "Cigarettes", "Alcohol"];
+
+  // Check user login status
+  const currentUser = useObservable(db.cloud.currentUser);
+  const cloudConfigured = !!import.meta.env.VITE_DEXIE_CLOUD_URL;
 
   // Query Products
   const products = useLiveQuery(async () => {
@@ -69,26 +75,61 @@ export function PriceSearch() {
     }
   }
 
-  // Calculate Totals
-  const cartTotal = cart.reduce((sum, item) => sum + (item.retailPrice * item.qty), 0);
+  // Calculate Totals using money utilities
+  const cartTotalCents = calculateTotal(
+    cart.map(item => ({
+      retailPrice: pesoCents(item.retailPrice),
+      qty: item.qty
+    }))
+  );
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   return (
-    <div className="bg-slate-50 min-h-screen relative pb-32">
-      
+    <div className="bg-neutral-50 min-h-screen relative pb-32">
+
       {/* 1. STICKY SEARCH HEADER */}
-      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm px-4 pt-4 pb-3">
-        <div className="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search items..."
-            className="w-full pl-10 pr-4 py-3 bg-slate-100 border-none rounded-xl text-slate-800 font-medium focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-slate-400 outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-neutral-200 shadow-base px-4 pt-4 pb-3">
+        <div className="flex items-center gap-2">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-3.5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search items..."
+              aria-label="Search products"
+              className="w-full pl-10 pr-4 py-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl text-neutral-800 font-medium focus:border-brand-500 focus:bg-white transition-all placeholder:text-neutral-400 outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Sync Button (only show if cloud configured) */}
+          {cloudConfigured && (
+            <button
+              onClick={currentUser ? undefined : onSyncClick}
+              aria-label={currentUser ? `Synced as ${currentUser.email || 'user'}` : 'Enable cloud sync'}
+              className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-sm ${
+                currentUser
+                  ? 'bg-success-100 text-success-600'
+                  : 'bg-brand-100 text-brand-600 hover:bg-brand-200 active:scale-95'
+              }`}
+            >
+              {currentUser ? (
+                // Synced icon (cloud with checkmark)
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                </svg>
+              ) : (
+                // Not synced icon (cloud with arrow)
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
@@ -109,8 +150,8 @@ export function PriceSearch() {
         {products?.length === 0 && (
           <div className="text-center py-20 opacity-60">
             <div className="text-6xl mb-4 grayscale">📦</div>
-            <p className="font-bold text-slate-600">No items found</p>
-            <p className="text-sm text-slate-400 mb-4">Try a different search term</p>
+            <p className="font-bold text-neutral-600">No items found</p>
+            <p className="text-sm text-neutral-400 mb-4">Try a different search term</p>
           </div>
         )}
       </div>
@@ -120,19 +161,20 @@ export function PriceSearch() {
         <div className="fixed bottom-24 left-4 right-4 z-40 animate-slide-up">
           <button 
             onClick={() => setShowCheckout(true)}
-            className="w-full bg-slate-900 text-white p-1 rounded-2xl shadow-2xl flex items-center pr-6 overflow-hidden active:scale-[0.98] transition-transform"
+            aria-label="Open checkout"
+            className="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 text-white p-1 rounded-2xl shadow-elevation-lg flex items-center pr-6 overflow-hidden active:scale-[0.98] transition-all hover:shadow-elevation"
           >
-            <div className="bg-blue-500 w-16 h-14 flex flex-col items-center justify-center rounded-xl mr-4">
-              <span className="font-bold text-lg leading-none">{cartCount}</span>
-              <span className="text-[10px] uppercase opacity-80">Items</span>
+            <div className="bg-gradient-to-br from-brand-500 to-brand-600 w-16 h-14 flex flex-col items-center justify-center rounded-xl mr-4 shadow-base">
+              <span className="font-black text-lg leading-none">{cartCount}</span>
+              <span className="text-[10px] uppercase opacity-90 font-bold">Items</span>
             </div>
             
             <div className="flex-grow text-left">
-              <div className="text-xs text-slate-400 font-medium uppercase tracking-wide">Total</div>
-              <div className="text-2xl font-bold leading-none">₱{cartTotal.toLocaleString()}</div>
+              <div className="text-xs text-neutral-400 font-bold uppercase tracking-wide">Total</div>
+              <div className="text-2xl font-black text-white leading-none">{formatPeso(cartTotalCents)}</div>
             </div>
             
-            <div className="flex items-center gap-1 font-bold text-blue-300 text-sm uppercase tracking-wider">
+            <div className="flex items-center gap-1 font-bold text-brand-300 text-sm uppercase tracking-wider">
               Checkout
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -153,18 +195,19 @@ export function PriceSearch() {
 
       {/* EDIT & DELETE MODAL */}
       {editingItem && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-slide-up">
+        <div className="fixed inset-0 bg-neutral-950/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-elevation-lg w-full max-w-sm overflow-hidden animate-slide-up">
             
             {/* Modal Header */}
-            <div className="bg-slate-50 p-4 border-b flex justify-between items-center">
+            <div className="bg-neutral-50 p-4 border-b border-neutral-200 flex justify-between items-center">
               <div>
-                <h3 className="font-bold text-lg text-slate-800">Edit Item</h3>
-                <p className="text-xs text-slate-400">Update inventory details</p>
+                <h3 className="font-bold text-lg text-neutral-900">Edit Item</h3>
+                <p className="text-xs text-neutral-500">Update inventory details</p>
               </div>
               <button 
-                onClick={() => setEditingItem(null)} 
-                className="w-8 h-8 rounded-full bg-slate-200 text-slate-500 font-bold hover:bg-slate-300 flex items-center justify-center"
+                onClick={() => setEditingItem(null)}
+                aria-label="Close edit modal"
+                className="w-8 h-8 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-600 font-bold transition-colors flex items-center justify-center"
               >
                 ×
               </button>
@@ -174,49 +217,61 @@ export function PriceSearch() {
               
               {/* Name */}
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Product Name</label>
+                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1">Product Name</label>
                 <input 
-                  type="text" value={editingItem.name} 
+                  type="text" 
+                  value={editingItem.name}
+                  aria-label="Edit product name"
                   onChange={e => setEditingItem({...editingItem, name: e.target.value})}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold text-neutral-800 focus:border-brand-500 focus:bg-white outline-none transition-all"
                 />
               </div>
 
               <div className="flex gap-4">
                 {/* Price */}
                 <div className="flex-1">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Price</label>
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1">Price</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-3 text-slate-400 font-bold">₱</span>
+                    <span className="absolute left-4 top-3 text-neutral-400 font-bold">₱</span>
                     <input 
-                      type="number" value={editingItem.retailPrice} 
+                      type="number" 
+                      value={editingItem.retailPrice}
+                      aria-label="Edit product price"
                       onChange={e => setEditingItem({...editingItem, retailPrice: e.target.value})}
-                      className="w-full pl-7 p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full pl-10 p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold text-brand-600 focus:border-brand-500 focus:bg-white outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Stock */}
                 <div className="flex-1">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Stock</label>
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1">Stock</label>
                   <input 
-                    type="number" value={editingItem.stock} 
+                    type="number" 
+                    value={editingItem.stock}
+                    aria-label="Edit product stock"
                     onChange={e => setEditingItem({...editingItem, stock: e.target.value})}
-                    className={`w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none ${editingItem.stock <= 5 ? 'text-orange-500' : 'text-slate-800'}`}
+                    className={`w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-bold focus:bg-white outline-none transition-all ${editingItem.stock <= 5 ? 'text-warning-600 border-warning-200 focus:border-warning-500' : 'text-neutral-800 focus:border-brand-500'}`}
                   />
                 </div>
               </div>
 
               {/* Category */}
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Category</label>
-                <select 
-                  value={editingItem.category} 
-                  onChange={e => setEditingItem({...editingItem, category: e.target.value})}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider ml-1">Category</label>
+                <div className="relative">
+                  <select 
+                    value={editingItem.category} 
+                    aria-label="Edit product category"
+                    onChange={e => setEditingItem({...editingItem, category: e.target.value})}
+                    className="w-full p-3 bg-neutral-100 border-2 border-neutral-200 rounded-xl font-medium appearance-none focus:border-brand-500 focus:bg-white outline-none transition-all"
+                  >
+                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-neutral-500">
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                  </div>
+                </div>
               </div>
 
               {/* Footer Actions */}
@@ -225,7 +280,7 @@ export function PriceSearch() {
                  <button 
                   type="button" 
                   onClick={handleDelete} 
-                  className="px-4 py-3 text-red-500 font-bold bg-red-50 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2"
+                  className="px-4 py-3 text-white font-bold bg-red-600 rounded-xl hover:bg-red-700 transition-colors flex items-center gap-2"
                  >
                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
